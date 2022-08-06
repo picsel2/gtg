@@ -33,6 +33,17 @@ class TaskBox(Gtk.Box):
 
     task = GObject.Property(type=Task2)
 
+    @GObject.Property(type=bool, default=True)
+    def is_active(self) -> None:
+        return
+
+    @is_active.setter
+    def set_is_active(self, value) -> bool:
+        if value:
+            self.remove_css_class('closed-task')
+        else:
+            self.add_css_class('closed-task')
+
 
 def unwrap(row, expected_type):
     """Find an item in TreeRow widget (sometimes nested)."""
@@ -367,6 +378,8 @@ class TaskPane(Gtk.ScrolledWindow):
         item.bind_property('date_due_str', due, 'label', BIND_FLAGS)
         item.bind_property('date_start_str', start, 'label', BIND_FLAGS)
 
+        item.bind_property('is_active', box, 'is_active', BIND_FLAGS)
+        
         colors = []
         for t in item.tags:
             if t.color and not t.icon:
@@ -377,13 +390,7 @@ class TaskPane(Gtk.ScrolledWindow):
         color.set_size_request((16 + 6) * len(colors), 16)
         color.colors = colors
 
-
         check.set_active(item.status == Status.DONE)
-
-        if item.status == Status.ACTIVE:
-            box.remove_css_class('closed-task')
-        else:
-            box.add_css_class('closed-task')
 
         # Set icons from tags
         icons_text = ''
