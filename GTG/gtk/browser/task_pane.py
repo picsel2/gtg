@@ -261,6 +261,8 @@ class TaskPane(Gtk.ScrolledWindow):
             task.toggle_dismiss()
         else:
             task.toggle_active()
+        
+        task.notify('is_active')
 
 
     def task_setup_cb(self, factory, listitem, user_data=None):
