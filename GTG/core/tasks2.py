@@ -373,6 +373,11 @@ class Task2(GObject.Object):
         self._is_active = value
 
 
+    @GObject.Property(type=bool, default=False)
+    def has_children(self) -> bool:
+        return len(self.children)
+
+
     def __str__(self) -> str:
         """String representation."""
 
