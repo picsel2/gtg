@@ -51,6 +51,8 @@ class TagPill(Gtk.DrawingArea):
                 rgba.parse(color)
                 self.colors.append(rgba)
 
+            self.set_size_request((16 + 6) * len(self.colors), 16)
+            self.queue_draw()
         except AttributeError:
             self.colors = [Gdk.RGBA()]
 
