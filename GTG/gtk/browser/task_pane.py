@@ -56,18 +56,21 @@ class TaskBox(Gtk.Box):
 
     @row_css.setter
     def set_row_css(self, value) -> None:
-        show = self.config.get("bg_color_enable")
-        print(show)
+        show = self.config.get('bg_color_enable')
+        context = self.get_style_context()
 
         if not value or not show:
-            return
-
+            try:
+                context.remove_provider(self.provider)
+                return
+            except AttributeError:
+                return
+                
         val = str.encode(value)
 
-        cssProvider = Gtk.CssProvider()
-        cssProvider.load_from_data(val)
-        self.get_style_context().add_provider(cssProvider, 
-                                              Gtk.STYLE_PROVIDER_PRIORITY_USER)
+        self.provider = Gtk.CssProvider()
+        self.provider.load_from_data(val)
+        context.add_provider(self.provider, Gtk.STYLE_PROVIDER_PRIORITY_USER)
 
 
 def unwrap(row, expected_type):
