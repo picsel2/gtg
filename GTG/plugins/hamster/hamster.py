@@ -141,7 +141,7 @@ class HamsterPlugin():
 
     def on_task_modified(self, task_id, path):
         """ Stop task if it is tracked and it is Done/Dismissed """
-        task = self.plugin_api.get_requester().get_task(task_id)
+        task = self.plugin_api.ds.tasks.lookup[task_id]
         if not task:
             return
         if task.get_status() in (Task.STA_DISMISSED, Task.STA_DONE):
@@ -304,8 +304,8 @@ class HamsterPlugin():
         self.liblarch_callbacks = []
 
     def browser_cb(self, widget, plugin_api):
-        task_id = plugin_api.get_browser().get_selected_task()
-        task = plugin_api.get_requester().get_task(task_id)
+        task_id = plugin_api.browser.get_pane().get_selection()[0]
+        task = plugin_api.ds.tasks.lookup[task_id]
         self.decide_start_or_stop_activity(task, widget)
 
     def task_cb(self, action, gparam, plugin_api):
@@ -334,7 +334,7 @@ class HamsterPlugin():
         task_id = self.plugin_api.get_browser().get_selected_task()
         if not task_id:
             return
-        task = self.plugin_api.get_requester().get_task(task_id)
+        task = self.plugin_api.ds.tasks.lookup[task_id]
         self.decide_button_mode(self.button, task)
 
     def decide_button_mode(self, button, task):

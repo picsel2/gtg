@@ -37,8 +37,7 @@ class PluginAPI():
     """
 
     def __init__(self,
-                 requester,
-                 view_manager,
+                 app,
                  taskeditor=None):
         """
         Construct a PluginAPI object.
@@ -48,17 +47,22 @@ class PluginAPI():
         @param task_id: The Editor, if we are in one
         otherwise.
         """
-        self.__requester = requester
-        self.__view_manager = view_manager
+
+        self.app = app
+        self.ds = app.ds
+        self.browser = app.browser
+        
         self.selection_changed_callback_listeners = []
+
         if taskeditor:
             self.__ui = taskeditor
             self.__task_id = taskeditor.get_task()
         else:
-            self.__ui = self.__view_manager.browser
+            self.__ui = self.browser
             self.__task_id = None
             # self.__view_manager.browser.selection.connect(
             #     "changed", self.__selection_changed)
+
         self.taskwidget_id = 0
         self.taskwidget_widg = []
 
@@ -84,12 +88,6 @@ class PluginAPI():
         returns a GTG.gtk.manager.Manager
         """
         return self.__view_manager
-
-    def get_requester(self):
-        """
-        returns a GTG.core.requester.Requester
-        """
-        return self.__requester
 
     def get_ui(self):
         """
