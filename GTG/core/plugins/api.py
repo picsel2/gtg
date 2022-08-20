@@ -88,7 +88,7 @@ class PluginAPI():
         """
         returns a GTG.gtk.manager.Manager
         """
-        return self.__view_manager
+        return self.app
 
     def get_ui(self):
         """
