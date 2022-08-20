@@ -362,7 +362,7 @@
                             <property name="name">open_view</property>
                             <property name="title" translatable="yes" context="tasks view name">Open</property>
                             <property name="child">
-                              <object class="GtkScrolledWindow" id="open_pane">
+                              <object class="GtkBox" id="open_pane">
                                 <child>
                                   <placeholder/>
                                 </child>
@@ -375,7 +375,7 @@
                             <property name="name">actionable_view</property>
                             <property name="title" translatable="yes" context="tasks view name">Actionable</property>
                             <property name="child">
-                              <object class="GtkScrolledWindow" id="actionable_pane">
+                              <object class="GtkBox" id="actionable_pane">
                                 <child>
                                   <placeholder/>
                                 </child>
@@ -388,7 +388,7 @@
                             <property name="name">closed_view</property>
                             <property name="title" translatable="yes" context="tasks view name">Closed</property>
                             <property name="child">
-                              <object class="GtkScrolledWindow" id="closed_pane">
+                              <object class="GtkBox" id="closed_pane">
                                 <child>
                                   <placeholder/>
                                 </child>
