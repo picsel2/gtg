@@ -60,15 +60,16 @@ class PluginAPI():
         else:
             self.__ui = self.browser
             self.__task_id = None
-            # self.__view_manager.browser.selection.connect(
-            #     "changed", self.__selection_changed)
+            
+            for pane in self.browser.panes:
+                pane.task_selection.connect('selection-changed', self.__selection_changed, pane)
 
         self.taskwidget_id = 0
         self.taskwidget_widg = []
 
-    def __selection_changed(self, selection):
+    def __selection_changed(self, model, position, n_items, user_data=None):
         for func in self.selection_changed_callback_listeners:
-            func(selection)
+            func(user_data.get_selection())
 
 # Accessor methods ============================================================
     def is_editor(self):
