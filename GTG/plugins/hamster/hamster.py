@@ -164,10 +164,13 @@ class HamsterPlugin():
             header_bar.pack_end(self.button)
             plugin_api.set_active_selection_changed_callback(self.selection_changed)
 
-        self.subscribe_task_updates([
-            ("node-modified-inview", self.on_task_modified),
-            ("node-deleted-inview", self.on_task_deleted),
-        ])
+        # self.subscribe_task_updates([
+        #     ("node-modified-inview", self.on_task_modified),
+        #     ("node-deleted-inview", self.on_task_deleted),
+        # ])
+
+        plugin_api.ds.tasks.tree_model.connect('items-changed', self.on_task_modified)
+        plugin_api.ds.tasks.tree_model.connect('items-changed', self.on_task_deleted)
 
         # set up preferences
         self.preference_dialog_init()
