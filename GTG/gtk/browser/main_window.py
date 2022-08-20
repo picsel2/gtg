@@ -87,8 +87,6 @@ class MainWindow(Gtk.ApplicationWindow):
     quickadd_pane = Gtk.Template.Child()
 
     sidebar_vbox = Gtk.Template.Child('sidebar_vbox')
-    sidebar_container = Gtk.Template.Child('sidebar-scroll')
-    sidebar_notebook = Gtk.Template.Child()
 
     vbox_toolbars = None
     stack_switcher = Gtk.Template.Child()
@@ -119,7 +117,7 @@ class MainWindow(Gtk.ApplicationWindow):
         self._init_context_menus()
 
         self.sidebar = Sidebar(app, app.ds)
-        self.sidebar_container.set_child(self.sidebar)
+        self.sidebar_vbox.append(self.sidebar)
 
         self.panes = {
             'active': None,
