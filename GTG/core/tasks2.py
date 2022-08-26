@@ -280,6 +280,14 @@ class Task2(GObject.Object):
 
         if isinstance(tag, Tag2):
             self.tags.add(tag)
+
+            if self.status == Status.ACTIVE:
+                tag.task_count_open += 1
+            else: 
+                tag.task_count_closed += 1
+            
+            if self.is_actionable:
+                tag.task_count_actionable += 1
         else:
             raise ValueError
 
@@ -290,6 +298,15 @@ class Task2(GObject.Object):
         for t in self.tags:
             if t.name == tag_name:
                 self.tags.remove(t)
+
+                if self.status == Status.ACTIVE:
+                    tag.task_count_open -= 1
+                else: 
+                    tag.task_count_closed -= 1
+                
+                if self.is_actionable():
+                    tag.task_count_actionable -= 1
+
                 self.content = (self.content.replace(f'{tag_name}\n\n', '')
                                             .replace(f'{tag_name},', '')
                                             .replace(f'{tag_name}', ''))
@@ -550,7 +567,7 @@ class TaskStore(BaseStore):
                 for t in taglist.iter('tag'):
                     try:
                         tag = tag_store.get(t.text)
-                        task.tags.add(tag)
+                        task.add_tag(tag)
                     except KeyError:
                         pass
 
