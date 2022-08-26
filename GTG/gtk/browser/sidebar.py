@@ -60,11 +60,12 @@ signal_block = GObject.signal_handler_block
 class Sidebar(Gtk.ScrolledWindow):
     """The sidebar widget"""
     
-    def __init__(self, app, ds: Datastore2):
+    def __init__(self, app, ds: Datastore2, browser):
 
         super(Sidebar, self).__init__()
         self.ds = ds
         self.app = app
+        self.browser = browser
 
         wrap_box = Gtk.Box()
         wrap_box.set_orientation(Gtk.Orientation.VERTICAL)
@@ -255,7 +256,9 @@ class Sidebar(Gtk.ScrolledWindow):
         expander = Gtk.TreeExpander()
         icon = Gtk.Label()
         color = TagPill()
-        count_label = Gtk.Label()
+        open_count_label = Gtk.Label()
+        actionable_count_label = Gtk.Label()
+        closed_count_label = Gtk.Label()
 
         expander.set_margin_end(6)
         expander.add_css_class('arrow-only-expander')
@@ -269,9 +272,18 @@ class Sidebar(Gtk.ScrolledWindow):
         label.set_halign(Gtk.Align.START)
         label.set_hexpand(True)
 
-        count_label.set_halign(Gtk.Align.START)
-        count_label.add_css_class('dim-label')
-        count_label.set_text('0')
+        open_count_label.set_halign(Gtk.Align.START)
+        open_count_label.add_css_class('dim-label')
+        open_count_label.set_text('0')
+
+        actionable_count_label.set_halign(Gtk.Align.START)
+        actionable_count_label.add_css_class('dim-label')
+        actionable_count_label.set_text('0')
+
+        closed_count_label.set_halign(Gtk.Align.START)
+        closed_count_label.add_css_class('dim-label')
+        closed_count_label.set_text('0')
+
 
         # Drag ...
         source = Gtk.DragSource() 
@@ -301,7 +313,9 @@ class Sidebar(Gtk.ScrolledWindow):
         box.append(color)
         box.append(icon)
         box.append(label)
-        box.append(count_label)
+        box.append(open_count_label)
+        box.append(actionable_count_label)
+        box.append(closed_count_label)
         listitem.set_child(box)
 
         # Right click event controller
@@ -320,7 +334,10 @@ class Sidebar(Gtk.ScrolledWindow):
         color = expander.get_next_sibling()
         icon = color.get_next_sibling()
         label = icon.get_next_sibling()
-        count_label = label.get_next_sibling()
+
+        open_count_label = label.get_next_sibling()
+        actionable_count_label = open_count_label.get_next_sibling()
+        closed_count_label = actionable_count_label.get_next_sibling()
 
         item = unwrap(listitem, Tag2)
 
@@ -334,17 +351,13 @@ class Sidebar(Gtk.ScrolledWindow):
         item.bind_property('has_color', color, 'visible', BIND_FLAGS)
         item.bind_property('has_icon', icon, 'visible', BIND_FLAGS)
 
-        try:
-            pane = self.app.browser.get_pane().pane
-        except AttributeError:
-            pane = 'active'
-
-        if pane == 'active':
-            item.bind_property('task_count_open', count_label, 'label', BIND_FLAGS)
-        elif pane == 'actionable':
-            item.bind_property('task_count_actionable', count_label, 'label', BIND_FLAGS)
-        elif pane == 'closed':
-            item.bind_property('task_count_closed', count_label, 'label', BIND_FLAGS)
+        item.bind_property('task_count_open', open_count_label, 'label', BIND_FLAGS)
+        item.bind_property('task_count_actionable', actionable_count_label, 'label', BIND_FLAGS)
+        item.bind_property('task_count_closed', closed_count_label, 'label', BIND_FLAGS)
+        
+        self.browser.bind_property('is_pane_open', open_count_label, 'visible', BIND_FLAGS)
+        self.browser.bind_property('is_pane_actionable', actionable_count_label, 'visible', BIND_FLAGS)
+        self.browser.bind_property('is_pane_closed', closed_count_label, 'visible', BIND_FLAGS)
         
 
         if item.parent:
