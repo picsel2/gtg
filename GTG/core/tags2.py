@@ -140,7 +140,7 @@ class Tag2(GObject.Object):
         return self._task_count_actionable
 
 
-    @task_count_actionabel.setter
+    @task_count_actionable.setter
     def set_task_count_actionable(self, value: int) -> None:
         self._task_count_actionable = value
 
