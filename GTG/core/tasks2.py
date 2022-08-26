@@ -187,6 +187,12 @@ class Task2(GObject.Object):
         self.has_date_due = bool(value)
         self.date_due_str = self._date_due.to_readable_string()
 
+        for tag in self.tags:
+            if self.is_actionable:
+                tag.task_count_actionable += 1 
+            else:
+                tag.task_count_actionable -= 1 
+
         if not value or value.is_fuzzy():
             return
 
