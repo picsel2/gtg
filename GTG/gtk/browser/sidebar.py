@@ -82,8 +82,8 @@ class Sidebar(Gtk.ScrolledWindow):
         all_count = str(ds.task_count['open']['all'])
         untag_count = str(ds.task_count['open']['untagged'])
 
-        self.all_btn = self.btn_item('emblem-documents-symbolic', 'All Tasks', all_count)
-        self.none_btn = self.btn_item('task-past-due-symbolic', 'Tasks with no tags', untag_count)
+        self.all_btn = self.btn_item('emblem-documents-symbolic', 'All Tasks', 'task_count_all')
+        self.none_btn = self.btn_item('task-past-due-symbolic', 'Tasks with no tags', 'task_count_no_tags')
 
         self.general_box.append(self.all_btn)
         self.general_box.append(self.none_btn)
@@ -224,7 +224,7 @@ class Sidebar(Gtk.ScrolledWindow):
         menu.popup()
 
 
-    def btn_item(self, icon_name:str, text: str, count: str) -> Gtk.Box:
+    def btn_item(self, icon_name:str, text: str, count_prop: str) -> Gtk.Box:
         """Generate a button for the main listbox."""
 
         box = Gtk.Box()
@@ -242,8 +242,9 @@ class Sidebar(Gtk.ScrolledWindow):
         count_label = Gtk.Label()
         count_label.set_halign(Gtk.Align.START)
         count_label.add_css_class('dim-label')
-        count_label.set_text(count)
         box.append(count_label)
+
+        self.ds.tasks.bind_property(count_prop, count_label, 'label', BIND_FLAGS)
 
         return box
 
