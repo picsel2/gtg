@@ -752,3 +752,20 @@ class TaskStore(BaseStore):
             t.children.sort(key=attrgetter(key), reverse=reverse)
 
         tasks.sort(key=attrgetter(key), reverse=reverse)
+
+
+    @GObject.Property(type=int)
+    def task_count_all(self) -> int:
+        return len(self.lookup.keys())
+
+
+    @GObject.Property(type=int)
+    def task_count_no_tags(self) -> int:
+        i = 0
+        
+        for task in self.lookup.values():
+            if not task.tags:
+                i += 1
+            
+        return i
+    
