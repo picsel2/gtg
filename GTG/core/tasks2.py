@@ -754,18 +754,17 @@ class TaskStore(BaseStore):
         tasks.sort(key=attrgetter(key), reverse=reverse)
 
 
-    @GObject.Property(type=int)
-    def task_count_all(self) -> int:
-        return len(self.lookup.keys())
+    @GObject.Property(type=str)
+    def task_count_all(self) -> str:
+        return str(len(self.lookup.keys()))
 
 
-    @GObject.Property(type=int)
-    def task_count_no_tags(self) -> int:
+    @GObject.Property(type=str)
+    def task_count_no_tags(self) -> str:
         i = 0
         
         for task in self.lookup.values():
             if not task.tags:
                 i += 1
-            
-        return i
-    
+
+        return str(i)
