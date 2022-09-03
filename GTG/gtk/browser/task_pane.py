@@ -408,8 +408,6 @@ class TaskPane(Gtk.ScrolledWindow):
         self.connect('expand-all', lambda s: box.expander.activate_action('listitem.expand'))
         self.connect('collapse-all', lambda s: box.expander.activate_action('listitem.collapse'))
 
-        # box.append(expander)
-        # box.append(check)
         box.append(label)
         box.append(due_icon)
         box.append(due)
