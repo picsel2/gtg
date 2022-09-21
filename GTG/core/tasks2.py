@@ -107,7 +107,7 @@ class Task2(GObject.Object):
 
         self._is_recurring = False
         self.recurring_term = None
-        self.recurring_updated_date = datetime.now()
+        self.recurring_updated_date = datetime.datetime.now()
 
         super(Task2, self).__init__()
 
@@ -384,7 +384,7 @@ class Task2(GObject.Object):
                 # If a start date is already set,
                 # we should calculate the next date from that day.
                 if self.date_start == Date.no_date():
-                    start_from = Date(datetime.now())
+                    start_from = Date(datetime.datetime.now())
                 else:
                     start_from = self.date_start
 
@@ -401,27 +401,27 @@ class Task2(GObject.Object):
         valid, newdate = is_valid_term()
         recurring_term = recurring_term if valid else None
 
-        if self._recurring:
+        if self._is_recurring:
             if not valid:
                 self.recurring_term = None
                 self._is_recurring = False
             else:
                 self.recurring_term = recurring_term
-                self.recurring_updated_date = datetime.now()
+                self.recurring_updated_date = datetime.datetime.now()
 
                 if newtask:
                     self.date_due = newdate
         else:
             if valid:
                 self.recurring_term = recurring_term
-                self.recurring_updated_date = datetime.now()
+                self.recurring_updated_date = datetime.datetime.now()
 
         # setting its children to recurrent
         for child in self.children:
             if child.status is Status.ACTIVE:
                 child.set_recurring(self._is_recurring, self.recurring_term)
 
-                if self.recurring:
+                if self._is_recurring:
                     child.date_due = newdate
 
 
@@ -474,13 +474,13 @@ class Task2(GObject.Object):
             Date: the next due date of a task
         """
 
-        today = date.today()
+        today = datetime.date.today()
         
-        if today <= self.due_date:
+        if today <= self.date_due:
             try:
                 nextdate = self.date_due.parse_from_date(self.recurring_term, newtask=False)
 
-                while nextdate <= self.due_date:
+                while nextdate <= self.date_due:
                     nextdate = nextdate.parse_from_date(self.recurring_term, newtask=False)
 
                 return nextdate
@@ -488,11 +488,11 @@ class Task2(GObject.Object):
             except Exception:
                 raise ValueError(f'Invalid recurring term {self.recurring_term}')
 
-        elif today > self.due_date:
+        elif today > self.date_due:
             try:
                 next_date = self.date_due.parse_from_date(self.recurring_term, newtask=False)
 
-                while next_date < date.today():
+                while next_date < datetime.date.today():
                     next_date = next_date.parse_from_date(self.recurring_term, newtask=False)
                     
                 return next_date
