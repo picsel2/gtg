@@ -130,7 +130,7 @@ class Task2(GObject.Object):
                 and can_start)
 
 
-    def toggle_active(self, propagate: bool = True) -> None:
+    def toggle_active(self, propagated: bool = False) -> None:
         """Toggle between possible statuses."""
 
         if self.status is Status.ACTIVE:
@@ -139,10 +139,10 @@ class Task2(GObject.Object):
         elif self.status is Status.DONE:
             status = Status.ACTIVE
 
-        self.set_status(status, propagate)
+        self.set_status(status, propagated)
 
 
-    def toggle_dismiss(self, propagate: bool = True) -> None:
+    def toggle_dismiss(self, propagated: bool = False) -> None:
         """Set this task to be dismissed."""
 
         if self.status is Status.ACTIVE:
@@ -151,10 +151,10 @@ class Task2(GObject.Object):
         elif self.status is Status.DISMISSED:
             status = Status.ACTIVE
 
-        self.set_status(status, propagate)
+        self.set_status(status, propagated)
 
 
-    def set_status(self, status: Status, propagate: bool = True) -> None:
+    def set_status(self, status: Status, propagated: bool = False) -> None:
         """Set status for task."""
 
         self.status = status
@@ -170,7 +170,7 @@ class Task2(GObject.Object):
             #   1- It is recurring.
             #   2- It has no parent or no recurring parent.
             #   3- It was directly marked as done (not by propagation from its parent).
-            if (self._is_recurring and not propagate and 
+            if (self._is_recurring and not propagated and 
                  not self.is_parent_recurring()):
                 self.duplicate_cb(self)
             
@@ -178,10 +178,10 @@ class Task2(GObject.Object):
             self.date_closed = Date.no_date()
 
             if self.parent and self.parent.status is not Status.ACTIVE:
-                self.parent.set_status(status, propagate=False)
+                self.parent.set_status(status, propagated=True)
             
         for child in self.children:
-            child.set_status(status, propagate=False)
+            child.set_status(status, propagated=True)
 
 
     @property
@@ -675,7 +675,7 @@ class TaskStore(BaseStore):
         return self.lookup[tid]
 
 
-    def duplicate_for_recurrent(self, task: Task2) -> None:
+    def duplicate_for_recurrent(self, task: Task2) -> Task2:
         """Duplicate a task for the next ocurrence."""
         
         new_task = self.new(task.title)
@@ -684,13 +684,16 @@ class TaskStore(BaseStore):
         new_task.date_added = task.date_added
         new_task.date_due = task.get_next_occurrence()
 
+        # Only goes through for the first task 
         if task.parent and task.parent.is_active:
             self.parent(new_task.id, task.parent.id)
 
         for child in task.children:
             new_child = self.duplicate_for_recurrent(child)
+            self.parent(new_child.id, new_task.id)
 
         log.debug("Duplicated task %s as task %s", task.id, new_task.id)
+        return new_task
         
 
     def new(self, title: str = None, parent: UUID = None) -> Task2:
