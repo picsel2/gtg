@@ -121,4 +121,6 @@ class SearchTaskFilter(Gtk.Filter):
 
     def do_match(self, item) -> bool:
         task = unwrap(item, Task2)
+        item.set_expanded(True)
+
         return search.search_filter(task, self.checks)
