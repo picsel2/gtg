@@ -33,7 +33,6 @@ gtg_core_sources = [
   'keyring.py',
   'networkmanager.py',
   'search.py',
-  'xml.py',
   'timer.py',
   'twokeydict.py',
   'urlregex.py',
