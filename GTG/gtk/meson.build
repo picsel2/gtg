@@ -40,7 +40,6 @@ gtg_browser_sources = [
   'browser/sidebar_context_menu.py',
   'browser/search_editor.py',
   'browser/tag_editor.py',
-  'browser/treeview_factory.py',
   'browser/quick_add.py',
   'browser/sidebar.py',
   'browser/tag_pill.py',
