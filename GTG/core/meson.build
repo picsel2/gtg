@@ -26,7 +26,6 @@ gtg_core_sources = [
   'borg.py',
   'clipboard.py',
   'config.py',
-  'datastore.py',
   'dates.py',
   'dirs.py',
   'firstrun_tasks.py',
