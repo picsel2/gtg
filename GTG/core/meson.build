@@ -33,7 +33,6 @@ gtg_core_sources = [
   'interruptible.py',
   'keyring.py',
   'networkmanager.py',
-  'requester.py',
   'search.py',
   'tag.py',
   'task.py',
