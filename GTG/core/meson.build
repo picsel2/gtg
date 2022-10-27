@@ -39,7 +39,6 @@ gtg_core_sources = [
   'task.py',
   'xml.py',
   'timer.py',
-  'treefactory.py',
   'twokeydict.py',
   'urlregex.py',
   'watchdog.py',
