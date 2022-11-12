@@ -135,7 +135,6 @@ class SavedSearchStore(BaseStore):
 
         # Do parent searches first
         for element in elements:
-            print('XML', element)
 
             search_id = element.get('id')
             name = element.get('name')
