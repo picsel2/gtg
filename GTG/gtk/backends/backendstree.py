@@ -18,7 +18,7 @@
 
 from gi.repository import Gtk
 
-from GTG.core.tag import ALLTASKS_TAG
+from GTG.core.tags2 import ALLTASKS_TAG
 from GTG.gtk.colors import get_colored_tags_markup, rgba_to_hex
 from GTG.backends.backend_signals import BackendSignals
 

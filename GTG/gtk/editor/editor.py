@@ -34,7 +34,6 @@ from GTG.core.dates import Accuracy, Date
 from GTG.core.dirs import UI_DIR
 from GTG.core.plugins.api import PluginAPI
 from GTG.core.plugins.engine import PluginEngine
-from GTG.core.task import Task
 from GTG.gtk.editor import GnomeConfig
 from GTG.gtk.editor.calendar import GTGCalendar
 from GTG.gtk.editor.recurring_menu import RecurringMenu
@@ -525,7 +524,7 @@ class TaskEditor(Gtk.Window):
         # due date and the actual closing date. If the task isn't marked
         # as done, we display the number of days left.
         status = self.task.get_status()
-        if status in [Task.STA_DISMISSED, Task.STA_DONE]:
+        if status in [Status.DISMISSED, Status.DONE]:
             delay = self.task.get_days_late()
             if delay is None:
                 txt = ""

@@ -30,8 +30,7 @@ from GTG.core import info
 from GTG.backends.backend_signals import BackendSignals
 from GTG.core.dirs import ICONS_DIR
 from GTG.core.search import parse_search_query, InvalidQuery
-from GTG.core.tag import SEARCH_TAG
-from GTG.core.task import Task
+from GTG.core.tags2 import SEARCH_TAG
 from gettext import gettext as _
 from GTG.gtk.browser import GnomeConfig
 from GTG.gtk.browser import quick_add
