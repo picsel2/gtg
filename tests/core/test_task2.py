@@ -148,7 +148,7 @@ class TestTask2(TestCase):
         task2.add_tag(tag2)
         self.assertEqual(len(task1.tags), 1)
         self.assertEqual(len(task2.tags), 1)
-        self.assertEqual(task2.tags[0].name, 'Another Tag')
+        self.assertEqual(list(task2.tags)[0].name, 'Another Tag')
 
 
     def test_due_date(self):
