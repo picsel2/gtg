@@ -8,9 +8,9 @@ from dateutil.tz import UTC
 from GTG.backends.backend_caldav import (CATEGORIES, CHILDREN_FIELD,
                                          DAV_IGNORE, PARENT_FIELD, UID_FIELD,
                                          Backend, DueDateField, Translator)
-from GTG.core.datastore import DataStore
+from GTG.core.datastore2 import Datastore2 as DataStore
 from GTG.core.dates import LOCAL_TIMEZONE, Date
-from GTG.core.task import Task
+from GTG.core.tasks2 import Task2 as Task
 from mock import Mock, patch
 from tests.test_utils import MockTimer
 

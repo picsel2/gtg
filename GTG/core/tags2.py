@@ -43,7 +43,6 @@ SEARCH_TAG = "search"
 
 def extract_tags_from_text(text):
     """ Given a string, returns a list of the @tags contained in that """
-
     return re.findall(r'(?:^|[\s])(@[\w\/\.\-\:\&]*\w)', text)
 
 

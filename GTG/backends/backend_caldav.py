@@ -34,7 +34,8 @@ from GTG.backends.generic_backend import GenericBackend
 from GTG.backends.periodic_import_backend import PeriodicImportBackend
 from GTG.core.dates import LOCAL_TIMEZONE, Accuracy, Date
 from GTG.core.interruptible import interruptible
-from GTG.core.task import DisabledSyncCtx, Task
+#from GTG.core.task import DisabledSyncCtx, Task
+from GTG.core.tasks2 import Task2 as Task, Status
 from vobject import iCalendar
 
 logger = logging.getLogger(__name__)
@@ -243,7 +244,7 @@ class Backend(PeriodicImportBackend):
             do_delete = True
         # if cache is initialized, it's normal we missed completed
         # task, but we should have seen active ones
-        elif task.get_status() == Task.STA_ACTIVE:
+        elif task.get_status() == Status.ACTIVE:
             __, calendar = self._get_todo_and_calendar(task)
             if not calendar:
                 logger.warning("Couldn't find calendar for %r", task)
@@ -555,11 +556,11 @@ class UTCDateTimeField(DateField):
 
 
 class Status(Field):
-    DEFAULT_STATUS = (Task.STA_ACTIVE, 'NEEDS-ACTION')
-    _status_mapping = ((Task.STA_ACTIVE, 'NEEDS-ACTION'),
-                       (Task.STA_ACTIVE, 'IN-PROCESS'),
-                       (Task.STA_DISMISSED, 'CANCELLED'),
-                       (Task.STA_DONE, 'COMPLETED'))
+    DEFAULT_STATUS = (Status.ACTIVE, 'NEEDS-ACTION')
+    _status_mapping = ((Status.ACTIVE, 'NEEDS-ACTION'),
+                       (Status.ACTIVE, 'IN-PROCESS'),
+                       (Status.DISMISSED, 'CANCELLED'),
+                       (Status.DONE, 'COMPLETED'))
 
     def _translate(self, gtg_value=None, dav_value=None):
         for gtg_status, dav_status in self._status_mapping:
@@ -574,9 +575,9 @@ class Status(Field):
     def get_gtg(self, task: Task, namespace: str = None) -> str:
         active, done = 0, 0
         for subtask in self._browse_subtasks(task):
-            if subtask.get_status() == Task.STA_ACTIVE:
+            if subtask.get_status() == Status.ACTIVE:
                 active += 1
-            elif subtask.get_status() == Task.STA_DONE:
+            elif subtask.get_status() == Status.DONE:
                 done += 1
             if active and done:
                 return 'IN-PROCESS'
@@ -599,9 +600,9 @@ class PercentComplete(Field):
     def get_gtg(self, task: Task, namespace: str = None) -> str:
         total_cnt, done_cnt = 0, 0
         for subtask in self._browse_subtasks(task):
-            if subtask.get_status() != Task.STA_DISMISSED:
+            if subtask.get_status() != Status.DISMISSED:
                 total_cnt += 1
-                if subtask.get_status() == Task.STA_DONE:
+                if subtask.get_status() == Status.DONE:
                     done_cnt += 1
         if total_cnt:
             return str(int(100 * done_cnt / total_cnt))
@@ -758,7 +759,7 @@ class Description(Field):
                 subtask = task.req.get_task(line[2:-2].strip())
                 if not subtask:
                     continue
-                if subtask.get_status() == Task.STA_DONE:
+                if subtask.get_status() == Status.DONE:
                     result += f"[x] {subtask.get_title()}\n"
                 else:
                     result += f"[ ] {subtask.get_title()}\n"

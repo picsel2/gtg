@@ -47,8 +47,7 @@ class ModifyTagsDialog(Gtk.Dialog):
         self.last_tag_entry = _("NewTag")
         self.last_apply_to_subtasks = False
 
-
-    def parse_tag_list(self, text):
+    def parse_tag_list(text):
         """ Parse a line of a list of tasks. User can specify if the tag is
         positive or not by prepending '!'.
 
@@ -66,7 +65,6 @@ class ModifyTagsDialog(Gtk.Dialog):
 
             result.append((tag, is_positive))
         return result
-
 
     def modify_tags(self, tasks):
         """ Show and run dialog for selected tasks """
@@ -92,7 +90,7 @@ class ModifyTagsDialog(Gtk.Dialog):
     def apply_changes(self):
         """ Apply changes """
 
-        tags = self.parse_tag_list(self._tag_entry.get_text())
+        tags = parse_tag_list(self._tag_entry.get_text())
 
         # If the checkbox is checked, find all subtasks
         if self._apply_to_subtasks_check.get_active():

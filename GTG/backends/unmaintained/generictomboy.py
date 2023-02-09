@@ -34,10 +34,10 @@ from GTG.core.borg import Borg
 from GTG.backends.generic_backend import GenericBackend
 from GTG.backends.backend_signals import BackendSignals
 from GTG.backends.sync_engine import SyncEngine, SyncMeme
-from GTG.core.tag import ALLTASKS_TAG
+from GTG.core.tags2 import ALLTASKS_TAG
 from GTG.core.watchdog import Watchdog
 from GTG.core.interruptible import interruptible
-from GTG.core.tag import extract_tags_from_text
+from GTG.core.tags2 import extract_tags_from_text
 
 log = logging.getLogger(__name__)
 

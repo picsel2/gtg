@@ -18,7 +18,9 @@
 
 from unittest import TestCase
 
-from GTG.core.tag import extract_tags_from_text, parse_tag_list
+from GTG.core.tags2 import extract_tags_from_text
+from GTG.gtk.browser.modify_tags import ModifyTagsDialog
+parse_tag_list = ModifyTagsDialog.parse_tag_list
 
 
 class TestExtractTags(TestCase):
