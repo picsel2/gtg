@@ -43,6 +43,7 @@ class SavedSearch(GObject.Object):
         self._name = name
         self._query = query
         self._icon = None
+        self.children = []
 
         super(SavedSearch, self).__init__()
 
