@@ -168,8 +168,8 @@ class TestSavedSearch(TestCase):
     <searchList>
         <savedSearch id="4796b97b-3690-4e74-a056-4153061958df" name="Urgent in tasks" query="urgent" />
         <savedSearch id="2ff11525-a209-4cd9-8f50-859592f1ee37" name="Other tasks" query="@other" />
-        <savedSearch id="89fdc73c-6776-4d65-8220-dffec1953fae" name="More tasks" query="@another" parent="Other tasks"/>
-        <savedSearch id="588c9ffa-e96b-42a1-862b-8684fc09181e" name="More tasks 2" query="@yet_another" parent="More tasks 2"/>
+        <savedSearch id="89fdc73c-6776-4d65-8220-dffec1953fae" name="More tasks" query="@another" parent="2ff11525-a209-4cd9-8f50-859592f1ee37"/>
+        <savedSearch id="588c9ffa-e96b-42a1-862b-8684fc09181e" name="More tasks 2" query="@yet_another" parent="588c9ffa-e96b-42a1-862b-8684fc09181e"/>
     </searchList>
                  ''')
 

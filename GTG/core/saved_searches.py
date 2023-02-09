@@ -140,10 +140,11 @@ class SavedSearchStore(BaseStore):
             search_id = element.get('id')
             name = element.get('name')
             query = element.get('query')
+            parent = element.get('parent')
 
             search = SavedSearch(id=search_id, name=name, query=query)
 
-            self.add(search)
+            self.add(search, parent)
             log.debug('Added %s', search)
 
 
@@ -164,11 +165,10 @@ class SavedSearchStore(BaseStore):
     def new(self, name: str, query: str, parent: UUID = None) -> SavedSearch:
         """Create a new saved search and add it to the store."""
 
-        search_id = uuid4()
-        search = SavedSearch(id=search_id, name=name, query=query)
+        search = SavedSearch(id=uuid4(), name=name, query=query)
 
-        self.data.append(search)
-        self.lookup[search_id] = search
+        self.add(search, parent)
+
         self.model.append(search)
 
         return search
