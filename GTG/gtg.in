@@ -80,7 +80,7 @@ gi.require_version('GtkSource', '5')
 # GTK 4.10 introduced an api change that requires a fix in PyGObject:
 # https://gitlab.gnome.org/GNOME/pygobject/-/merge_requests/231
 from gi.repository import Gtk
-if (Gtk.get_major_version(), Gtk.get_minor_version()) >= (4, 9):
+if (4,9) <= (Gtk.get_major_version(), Gtk.get_minor_version()) < (4, 12):
     def decorate(original_func):
         def compat(self, data: bytes):
             original_func(self, data.decode(), -1)
