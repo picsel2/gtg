@@ -1,0 +1,33 @@
+[tool.poetry]
+name = "GTG"
+version = "0.6.0"
+description = "Getting Things GNOME! (GTG) is a personal tasks and TODO-list items organizer for the GNOME desktop environment and inspired by the \"Getting Things Done\" (GTD) methodology."
+authors = []
+license = "GPL-3.0-only"
+packages = [
+    { include = "GTG" },
+]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+lxml = "^4.9.2"
+dbus-python = "^1.2.18"
+liblarch = {git = "https://github.com/getting-things-gnome/liblarch.git"}
+
+[tool.poetry.group.caldav]
+optional = true
+
+[tool.poetry.group.caldav.dependencies]
+caldav = {version = "0.8.0", optional = true}
+
+[tool.poetry.group.dev.dependencies]
+ruff = "^0.0.246"
+pygobject-stubs = "^2.8.0"
+
+[tool.poetry.dev-dependencies]
+pytest = "^7.2.1"
+mock = "^5.0.1"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
