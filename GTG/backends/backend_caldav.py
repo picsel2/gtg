@@ -26,6 +26,7 @@ from collections import defaultdict
 from datetime import date, datetime
 from gettext import gettext as _
 from hashlib import md5
+from uuid import uuid4
 
 import caldav
 from dateutil.tz import UTC
@@ -35,6 +36,7 @@ from GTG.backends.periodic_import_backend import PeriodicImportBackend
 from GTG.core.dates import LOCAL_TIMEZONE, Accuracy, Date
 from GTG.core.interruptible import interruptible
 from GTG.core.tasks import Task, Status
+from GTG.core.tags import Tag
 from vobject import iCalendar
 
 logger = logging.getLogger(__name__)
@@ -297,10 +299,9 @@ class Backend(PeriodicImportBackend):
             uid = UID_FIELD.get_dav(todo)
             self._cache.set_todo(todo, uid)
             # Updating and creating task according to todos
-            task = self.datastore.tasks.lookup[uid]
+            task = self.datastore.tasks.lookup.get(uid)
             if not task:  # not found, creating it
-                task = Task()
-                task.id = uid
+                task = Task(uid, "")
                 Translator.fill_task(todo, task, self.namespace)
                 self.datastore.tasks.add(task)
                 counts['created'] += 1
@@ -334,7 +335,7 @@ class Backend(PeriodicImportBackend):
                 parents = PARENT_FIELD.get_dav(todo)
                 if (not parents  # no parent mean no relationship on build
                         or parents[0] in known_todos  # already known parent
-                        or self.datastore.tasks.lookup[uid]):  # already known uid
+                        or self.datastore.tasks.lookup.get(uid)):  # already known uid
                     yield todo
                     known_todos.add(uid)
             if loop >= MAX_CALENDAR_DEPTH:
@@ -397,7 +398,7 @@ class Field:
 
     def get_gtg(self, task: Task, namespace: str = None):
         "Extract value from GTG.core.task.Task according to specified getter"
-        return getattr(task, self.task_get_func_name)()
+        return getattr(task, self.task_get_func_name)
 
     def clean_dav(self, vtodo: iCalendar):
         """Will remove existing conflicting value from vTodo object"""
@@ -428,7 +429,7 @@ class Field:
 
     def write_gtg(self, task: Task, value, namespace: str = None):
         """Will write new value to GTG.core.task.Task"""
-        return getattr(task, self.task_set_func_name)(value)
+        return setattr(task, self.task_set_func_name, value)
 
     def set_gtg(self, todo: iCalendar, task: Task,
                 namespace: str = None) -> None:
@@ -609,8 +610,8 @@ class Categories(Field):
     CAT_SPACE = '_'
 
     @classmethod
-    def to_tag(cls, category, prefix=''):
-        return f"{prefix}{category.replace(' ', cls.CAT_SPACE)}"
+    def to_tag(cls, category, prefix='') -> Tag:
+        return Tag(uuid4(), f"{prefix}{category.replace(' ', cls.CAT_SPACE)}")
 
     def get_gtg(self, task: Task, namespace: str = None) -> list:
         return [tag_name.lstrip('@').replace(self.CAT_SPACE, ' ')
@@ -636,22 +637,21 @@ class Categories(Field):
             task.add_tag(to_add)
         for to_delete in local_tags.difference(remote_tags):
             task.remove_tag(to_delete)
-        task.tags.sort(key=remote_tags.index)
 
     def get_calendar_tag(self, calendar: iCalendar) -> str:
         return self.to_tag(calendar.name, DAV_TAG_PREFIX)
 
     def has_calendar_tag(self, task: Task, calendar: iCalendar) -> bool:
-        return self.get_calendar_tag(calendar) in task.get_tags_name()
+        return self.get_calendar_tag(calendar) in task.tags
 
 
 class AttributeField(Field):
 
     def get_gtg(self, task: Task, namespace: str = None) -> str:
-        return task.get_attribute(self.dav_name, namespace=namespace)
+        return getattr(task, self.dav_name)
 
     def write_gtg(self, task: Task, value, namespace: str = None):
-        task.set_attribute(self.dav_name, value, namespace=namespace)
+        setattr(task, self.dav_name, value)
 
     def set_gtg(self, todo: iCalendar, task: Task,
                 namespace: str = None) -> None:
@@ -915,12 +915,12 @@ class DueDateField(DateField):
 DTSTART = DateField('dtstart', 'get_start_date', 'set_start_date')
 UID_FIELD = Field('uid', 'get_uuid', 'set_uuid')
 SEQUENCE = Sequence('sequence', '<fake attribute>', '')
-CATEGORIES = Categories('categories', 'get_tags_name', 'set_tags',
+CATEGORIES = Categories('categories', 'tags', 'tags',
                         ignored_values=[[]])
 PARENT_FIELD = RelatedTo('related-to', 'get_parents', 'set_parent',
                          task_remove_func_name='remove_parent',
                          reltype='parent')
-CHILDREN_FIELD = RelatedTo('related-to', 'get_children', 'add_child',
+CHILDREN_FIELD = RelatedTo('related-to', 'children', 'add_child',
                            task_remove_func_name='remove_child',
                            reltype='child')
 SORT_ORDER = OrderField('x-apple-sort-order', '', '')
@@ -929,7 +929,7 @@ SORT_ORDER = OrderField('x-apple-sort-order', '', '')
 class Translator:
     GTG_PRODID = "-//Getting Things Gnome//CalDAV Backend//EN"
     DTSTAMP_FIELD = UTCDateTimeField('dtstamp', '', '')
-    fields = [Field('summary', 'get_title', 'set_title'),
+    fields = [Field('summary', 'title', 'title'),
               Description('description', 'get_excerpt', 'set_text'),
               DueDateField('due', 'get_due_date_constraint', 'set_due_date'),
               UTCDateTimeField(
@@ -975,9 +975,9 @@ class Translator:
         nmspc = {'namespace': namespace}
         for field in cls.fields:
             field.set_gtg(todo, task, **nmspc)
-        task.set_attribute("url", str(todo.url), **nmspc)
-        task.set_attribute("calendar_url", str(todo.parent.url), **nmspc)
-        task.set_attribute("calendar_name", todo.parent.name, **nmspc)
+        setattr(task, "url", str(todo.url))
+        setattr(task, "calendar_url", str(todo.parent.url))
+        setattr(task, "calendar_name", todo.parent.name)
         if not CATEGORIES.has_calendar_tag(task, todo.parent):
             task.add_tag(CATEGORIES.get_calendar_tag(todo.parent))
         return task
