@@ -38,7 +38,7 @@ import GTG.core.info as info
 
 from lxml import etree as et
 
-from typing import Optional
+from typing import Optional, Union
 
 
 log = logging.getLogger(__name__)
@@ -281,7 +281,7 @@ class Datastore:
             self.first_run(self.data_path)
 
 
-    def find_old_path(self, datadir: str) -> None | str:
+    def find_old_path(self, datadir: str) -> Union[None, str]:
         """Reliably find the old data files."""
 
         # used by which version?
@@ -299,7 +299,7 @@ class Datastore:
         return None
 
 
-    def find_old_uuid_path(self, path: str) -> None | str:
+    def find_old_uuid_path(self, path: str) -> Union[None, str]:
         """Find the first backend entry with module='backend_localfile' and return its path."""
 
         with open(path, 'r') as stream:
